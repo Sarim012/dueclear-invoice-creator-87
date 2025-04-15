@@ -99,3 +99,70 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Invoice specific styles */
+@layer components {
+  .invoice-container {
+    @apply max-w-5xl mx-auto bg-white rounded-lg shadow-sm p-6;
+  }
+  
+  .invoice-section {
+    @apply mb-6;
+  }
+  
+  .invoice-heading {
+    @apply text-xl font-bold mb-4;
+  }
+  
+  .invoice-label {
+    @apply text-sm font-medium text-gray-600 mb-1;
+  }
+  
+  .invoice-value {
+    @apply font-medium;
+  }
+  
+  .invoice-table {
+    @apply w-full border-collapse;
+  }
+  
+  .invoice-table-header {
+    @apply text-left text-sm font-medium text-gray-500 border-b pb-2;
+  }
+  
+  .invoice-table-row {
+    @apply border-b border-gray-100 py-2;
+  }
+  
+  .invoice-table-cell {
+    @apply py-3 text-sm;
+  }
+  
+  .invoice-total {
+    @apply text-lg font-bold;
+  }
+  
+  .invoice-payment-method {
+    @apply flex items-center space-x-2;
+  }
+  
+  /* Make sure popover content is visible on mobile */
+  .popover-content-z-index {
+    @apply z-50;
+  }
+  
+  /* Responsive styles */
+  @media (max-width: 640px) {
+    .invoice-container {
+      @apply p-4;
+    }
+    
+    .invoice-section {
+      @apply mb-4;
+    }
+    
+    .invoice-table-header, .invoice-table-cell {
+      @apply text-xs;
+    }
+  }
+}

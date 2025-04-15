@@ -61,6 +61,16 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				invoice: {
+					blue: '#4F46E5',
+					indigo: '#6366F1',
+					purple: '#8B5CF6',
+					pink: '#EC4899',
+					'light-blue': '#F0F4FF',
+					'light-indigo': '#EEF2FF',
+					'light-purple': '#F3F4FF',
+					'light-pink': '#FCE7F3',
 				}
 			},
 			borderRadius: {
