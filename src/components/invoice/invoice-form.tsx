@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { format, addDays } from "date-fns";
@@ -195,7 +194,6 @@ export function InvoiceForm({ onSubmit, onCancel }: InvoiceFormProps) {
             <Card className="h-full">
               <CardContent className="pt-6">
                 <div className="flex flex-col items-center space-y-2">
-                  <h4 className="text-sm font-medium mb-2">Logo</h4>
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 w-full flex flex-col items-center">
                     {logoUrl ? (
                       <div className="flex flex-col items-center space-y-2">
@@ -221,9 +219,6 @@ export function InvoiceForm({ onSubmit, onCancel }: InvoiceFormProps) {
                         <Upload className="h-10 w-10 text-gray-400 mb-2" />
                         <div className="text-center">
                           <div className="text-sm font-medium mb-1">Upload logo</div>
-                          <div className="text-xs text-muted-foreground mb-1">
-                            Supported formats: JPG, PNG, SVG
-                          </div>
                           <div className="text-xs text-muted-foreground mb-2">
                             Recommended size: 500px × 500px
                           </div>
