@@ -38,13 +38,13 @@ export function PaymentTermsSelector({
 }: PaymentTermsSelectorProps) {
   const [open, setOpen] = React.useState(false);
 
-  // Safely memo-ize the display value
+  // Safely determine the display value
   const displayValue = React.useMemo(() => {
     const option = paymentTermsOptions.find(opt => opt.value === value);
     return option ? option.label : value || "Select payment terms";
   }, [value]);
 
-  // Safely memo-ize the options
+  // Safely ensure options is always an array
   const options = React.useMemo(() => {
     return paymentTermsOptions || [];
   }, []);
