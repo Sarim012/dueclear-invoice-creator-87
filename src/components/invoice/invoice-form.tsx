@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { format, addDays } from "date-fns";
-import { Plus } from "lucide-react";
+import { Plus, Upload, Calendar, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -181,122 +181,130 @@ export function InvoiceForm({ onSubmit, onCancel }: InvoiceFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
-      <div className="grid grid-cols-1 gap-8">
+    <form onSubmit={handleSubmit} className="space-y-6 max-w-5xl mx-auto">
+      <div className="grid grid-cols-1 gap-6">
         <div>
-          <h2 className="text-2xl font-bold mb-4">Create New Invoice</h2>
+          <h2 className="text-2xl font-bold mb-2">Create New Invoice</h2>
           <h3 className="text-lg font-medium mb-2">Invoice Details</h3>
         </div>
 
-        {/* Logo Upload Section */}
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex flex-col items-center space-y-4">
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 w-full max-w-xs flex flex-col items-center">
-                {logoUrl ? (
-                  <div className="flex flex-col items-center space-y-2">
-                    <img
-                      src={logoUrl}
-                      alt="Uploaded logo"
-                      className="w-32 h-32 object-contain"
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => {
-                        setLogoFile(null);
-                        setLogoUrl(undefined);
-                      }}
-                    >
-                      Remove
-                    </Button>
-                  </div>
-                ) : (
-                  <>
-                    <div className="mb-2 text-center">
-                      <div className="text-muted-foreground mb-2">Upload logo</div>
-                      <div className="text-sm text-muted-foreground mb-1">
-                        Supported formats: JPG, PNG, SVG
-                      </div>
-                      <div className="text-sm text-muted-foreground mb-4">
-                        Recommended size: 500px × 500px
-                      </div>
-                      
-                      <FileUpload
-                        onFileSelected={handleLogoUpload}
-                        maxSizeMB={1}
-                        allowedTypes={["image/jpeg", "image/png", "image/svg+xml"]}
-                      />
-                      
-                      <div className="text-xs text-muted-foreground mt-2">
-                        Max upload size: 1 MB
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Basic Invoice Details */}
+        {/* Main Invoice Details */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="invoiceNumber">Invoice Number</Label>
-            <Input
-              id="invoiceNumber"
-              value={invoiceNumber}
-              onChange={(e) => setInvoiceNumber(e.target.value)}
-            />
+          {/* Logo Upload Section */}
+          <div className="md:col-span-1">
+            <Card className="h-full">
+              <CardContent className="pt-6">
+                <div className="flex flex-col items-center space-y-2">
+                  <h4 className="text-sm font-medium mb-2">Logo</h4>
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 w-full flex flex-col items-center">
+                    {logoUrl ? (
+                      <div className="flex flex-col items-center space-y-2">
+                        <img
+                          src={logoUrl}
+                          alt="Uploaded logo"
+                          className="w-24 h-24 object-contain"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setLogoFile(null);
+                            setLogoUrl(undefined);
+                          }}
+                        >
+                          Remove
+                        </Button>
+                      </div>
+                    ) : (
+                      <>
+                        <Upload className="h-10 w-10 text-gray-400 mb-2" />
+                        <div className="text-center">
+                          <div className="text-sm font-medium mb-1">Upload logo</div>
+                          <div className="text-xs text-muted-foreground mb-1">
+                            Supported formats: JPG, PNG, SVG
+                          </div>
+                          <div className="text-xs text-muted-foreground mb-2">
+                            Recommended size: 500px × 500px
+                          </div>
+                          
+                          <FileUpload
+                            onFileSelected={handleLogoUpload}
+                            maxSizeMB={1}
+                            allowedTypes={["image/jpeg", "image/png", "image/svg+xml"]}
+                          />
+                          
+                          <div className="text-xs text-muted-foreground mt-2">
+                            Max upload size: 1 MB
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="paymentTerms">Payment Terms</Label>
-            <PaymentTermsSelector
-              value={paymentTerms}
-              onValueChange={setPaymentTerms}
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="issueDate">Issue Date</Label>
-            <DatePicker
-              date={issueDate}
-              onDateChange={(date) => date && setIssueDate(date)}
-              label={format(new Date(), "MM/dd/yyyy")}
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="dueDate">Due Date</Label>
-            <DatePicker
-              date={dueDate}
-              onDateChange={(date) => date && setDueDate(date)}
-              label="Select due date"
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="currency">Currency</Label>
-            <CurrencySelector value={currency} onValueChange={setCurrency} />
+
+          {/* Invoice Details Right Side */}
+          <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="invoiceNumber">Invoice Number</Label>
+              <Input
+                id="invoiceNumber"
+                value={invoiceNumber}
+                onChange={(e) => setInvoiceNumber(e.target.value)}
+                className="bg-white"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="paymentTerms">Payment Terms</Label>
+              <PaymentTermsSelector
+                value={paymentTerms}
+                onValueChange={setPaymentTerms}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="issueDate">Issue Date</Label>
+              <DatePicker
+                date={issueDate}
+                onDateChange={(date) => date && setIssueDate(date)}
+                label={format(issueDate, "MM/dd/yyyy")}
+                className="bg-white"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="dueDate">Due Date</Label>
+              <DatePicker
+                date={dueDate}
+                onDateChange={(date) => date && setDueDate(date)}
+                label={format(dueDate, "MM/dd/yyyy")}
+                className="bg-white"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="currency">Currency</Label>
+              <CurrencySelector value={currency} onValueChange={setCurrency} />
+            </div>
           </div>
         </div>
 
         {/* Business and Client Details */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <Label htmlFor="businessDetails">Invoice From</Label>
             <p className="text-sm text-muted-foreground">Your Business Details</p>
             <Textarea
               id="businessDetails"
-              placeholder="Business Name,
-Address,
-Phone,
-Email,
-TAX ID, etc."
-              rows={5}
+              placeholder="Business Name, Address, Phone, Email, TAX ID, etc."
+              rows={4}
               value={businessDetails}
               onChange={(e) => setBusinessDetails(e.target.value)}
+              className="bg-white"
             />
           </div>
           
@@ -305,14 +313,11 @@ TAX ID, etc."
             <p className="text-sm text-muted-foreground">Client Details</p>
             <Textarea
               id="clientDetails"
-              placeholder="Client/Business Name,
-Address,
-Phone,
-Email,
-TAX ID, etc."
-              rows={5}
+              placeholder="Client/Business Name, Address, Phone, Email, TAX ID, etc."
+              rows={4}
               value={clientDetails}
               onChange={(e) => setClientDetails(e.target.value)}
+              className="bg-white"
             />
           </div>
         </div>
@@ -321,28 +326,100 @@ TAX ID, etc."
         <div className="space-y-4">
           <h3 className="text-lg font-medium">Items</h3>
           
-          <div className="grid grid-cols-12 gap-2 font-medium text-sm mb-2">
-            <div className="col-span-4 sm:col-span-5">Item Description</div>
-            <div className="col-span-2 sm:col-span-1">Qty</div>
-            <div className="col-span-2">Rate</div>
-            <div className="col-span-2">Discount</div>
-            <div className="col-span-1 text-right">Amount</div>
-            <div className="col-span-1"></div>
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="text-left border-b">
+                  <th className="py-2 font-medium text-sm">Item Description</th>
+                  <th className="py-2 font-medium text-sm text-center w-16">Qty</th>
+                  <th className="py-2 font-medium text-sm text-center w-24">Rate</th>
+                  <th className="py-2 font-medium text-sm text-center w-24">Discount</th>
+                  <th className="py-2 font-medium text-sm text-right w-28">Amount</th>
+                  <th className="py-2 w-10"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {items.map((item) => (
+                  <tr key={item.id} className="border-b">
+                    <td className="py-2">
+                      <Input
+                        value={item.description}
+                        onChange={(e) => handleItemChange({
+                          ...item,
+                          description: e.target.value
+                        })}
+                        placeholder="Item description"
+                        className="bg-white"
+                      />
+                    </td>
+                    <td className="py-2">
+                      <Input
+                        type="number"
+                        min="1"
+                        value={item.quantity}
+                        onChange={(e) => handleItemChange({
+                          ...item,
+                          quantity: parseInt(e.target.value) || 0,
+                          amount: (parseInt(e.target.value) || 0) * item.rate * (1 - item.discount / 100)
+                        })}
+                        className="text-center bg-white"
+                      />
+                    </td>
+                    <td className="py-2">
+                      <Input
+                        type="number"
+                        min="0"
+                        value={item.rate}
+                        onChange={(e) => handleItemChange({
+                          ...item,
+                          rate: parseFloat(e.target.value) || 0,
+                          amount: item.quantity * (parseFloat(e.target.value) || 0) * (1 - item.discount / 100)
+                        })}
+                        className="text-center bg-white"
+                      />
+                    </td>
+                    <td className="py-2">
+                      <div className="flex items-center">
+                        <Input
+                          type="number"
+                          min="0"
+                          max="100"
+                          value={item.discount}
+                          onChange={(e) => handleItemChange({
+                            ...item,
+                            discount: parseFloat(e.target.value) || 0,
+                            amount: item.quantity * item.rate * (1 - (parseFloat(e.target.value) || 0) / 100)
+                          })}
+                          className="text-center bg-white"
+                        />
+                        <span className="ml-1">%</span>
+                      </div>
+                    </td>
+                    <td className="py-2 text-right">
+                      {formatCurrency(item.amount, currency)}
+                    </td>
+                    <td className="py-2 text-center">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-red-500"
+                        onClick={() => handleRemoveItem(item.id)}
+                        disabled={items.length <= 1}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-          
-          {items.map((item) => (
-            <InvoiceItemRow
-              key={item.id}
-              item={item}
-              onChange={handleItemChange}
-              onRemove={() => handleRemoveItem(item.id)}
-              currency={currency}
-            />
-          ))}
           
           <Button
             type="button"
             variant="outline"
+            size="sm"
             className="text-primary"
             onClick={handleAddItem}
           >
@@ -353,22 +430,22 @@ TAX ID, etc."
 
         {/* Summary Calculations */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="md:col-start-2 space-y-4">
-            <div className="flex justify-between">
-              <span>Subtotal:</span>
+          <div className="md:col-start-2 space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="font-medium">Subtotal:</span>
               <span>{formatCurrency(subtotal, currency)}</span>
             </div>
             
             <div className="flex justify-between items-center">
               <span>Discount:</span>
-              <div className="flex items-center space-x-2 w-1/3">
+              <div className="flex items-center space-x-2 w-28">
                 <Input
                   type="number"
                   min="0"
                   max="100"
                   value={discountPercent}
                   onChange={(e) => setDiscountPercent(parseInt(e.target.value) || 0)}
-                  className="w-full"
+                  className="w-full text-right bg-white"
                 />
                 <span>%</span>
               </div>
@@ -376,14 +453,14 @@ TAX ID, etc."
             
             <div className="flex justify-between items-center">
               <span>Tax:</span>
-              <div className="flex items-center space-x-2 w-1/3">
+              <div className="flex items-center space-x-2 w-28">
                 <Input
                   type="number"
                   min="0"
                   max="100"
                   value={taxPercent}
                   onChange={(e) => setTaxPercent(parseInt(e.target.value) || 0)}
-                  className="w-full"
+                  className="w-full text-right bg-white"
                 />
                 <span>%</span>
               </div>
@@ -391,13 +468,13 @@ TAX ID, etc."
             
             <div className="flex justify-between items-center">
               <span>Shipping:</span>
-              <div className="w-1/3">
+              <div className="w-28">
                 <Input
                   type="number"
                   min="0"
                   value={shipping}
                   onChange={(e) => setShipping(parseInt(e.target.value) || 0)}
-                  className="w-full"
+                  className="w-full text-right bg-white"
                 />
               </div>
             </div>
@@ -425,30 +502,27 @@ TAX ID, etc."
               <Label htmlFor="bankDetails">Enter bank details</Label>
               <Textarea
                 id="bankDetails"
-                placeholder="Bank Name,
-Account Holder Name,
-Account Number,
-Account Type,
-IFSC/SWIFT Code,
-IBAN, etc..."
-                rows={5}
+                placeholder="Bank Name, Account Holder Name, Account Number, Account Type, IFSC/SWIFT Code, IBAN, etc..."
+                rows={4}
                 value={bankDetails}
                 onChange={(e) => setBankDetails(e.target.value)}
+                className="bg-white"
               />
             </div>
           )}
         </div>
 
         {/* Notes and Terms */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <Label htmlFor="notes">Notes</Label>
             <Textarea
               id="notes"
               placeholder="Notes to be displayed on the invoice"
-              rows={5}
+              rows={4}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
+              className="bg-white"
             />
           </div>
           
@@ -457,9 +531,10 @@ IBAN, etc..."
             <Textarea
               id="terms"
               placeholder="Terms and conditions for this invoice"
-              rows={5}
+              rows={4}
               value={terms}
               onChange={(e) => setTerms(e.target.value)}
+              className="bg-white"
             />
           </div>
         </div>
