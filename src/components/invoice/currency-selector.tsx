@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Check, ChevronsUpDown, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -26,10 +26,24 @@ export function CurrencySelector({ value, onValueChange }: CurrencySelectorProps
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const selectedCurrency = allCurrencies.find((currency) => currency.code === value);
-  const displayValue = selectedCurrency 
-    ? `${selectedCurrency.code} (${selectedCurrency.symbol})` 
-    : "Select currency";
+  // Safely determine the display value using useMemo
+  const displayValue = useMemo(() => {
+    const selectedCurrency = value ? allCurrencies.find((currency) => currency.code === value) : null;
+    return selectedCurrency 
+      ? `${selectedCurrency.code} (${selectedCurrency.symbol})` 
+      : "Select currency";
+  }, [value]);
+
+  // Filter currencies for display based on search term
+  const displayCommonCurrencies = useMemo(() => {
+    return commonCurrencies || [];
+  }, []);
+
+  const displayAllCurrencies = useMemo(() => {
+    return allCurrencies
+      ? allCurrencies.filter(c => !commonCurrencies.some(common => common.code === c.code))
+      : [];
+  }, []);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -57,7 +71,7 @@ export function CurrencySelector({ value, onValueChange }: CurrencySelectorProps
           </div>
           <CommandEmpty>No currency found.</CommandEmpty>
           <CommandGroup heading="Common Currencies">
-            {commonCurrencies.map((currency) => (
+            {displayCommonCurrencies.map((currency) => (
               <CommandItem
                 key={currency.code}
                 value={currency.code}
@@ -77,26 +91,24 @@ export function CurrencySelector({ value, onValueChange }: CurrencySelectorProps
             ))}
           </CommandGroup>
           <CommandGroup heading="All Currencies">
-            {allCurrencies
-              .filter(c => !commonCurrencies.some(common => common.code === c.code))
-              .map((currency) => (
-                <CommandItem
-                  key={currency.code}
-                  value={currency.code}
-                  onSelect={() => {
-                    onValueChange(currency.code);
-                    setOpen(false);
-                  }}
-                >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      value === currency.code ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                  {currency.code} ({currency.symbol}) - {currency.name}
-                </CommandItem>
-              ))}
+            {displayAllCurrencies.map((currency) => (
+              <CommandItem
+                key={currency.code}
+                value={currency.code}
+                onSelect={() => {
+                  onValueChange(currency.code);
+                  setOpen(false);
+                }}
+              >
+                <Check
+                  className={cn(
+                    "mr-2 h-4 w-4",
+                    value === currency.code ? "opacity-100" : "opacity-0"
+                  )}
+                />
+                {currency.code} ({currency.symbol}) - {currency.name}
+              </CommandItem>
+            ))}
           </CommandGroup>
         </Command>
       </PopoverContent>
