@@ -38,6 +38,12 @@ export function PaymentTermsSelector({
 }: PaymentTermsSelectorProps) {
   const [open, setOpen] = React.useState(false);
 
+  // Find the display label based on selected value or use empty string if not found
+  const displayValue = React.useMemo(() => {
+    const option = paymentTermsOptions.find(opt => opt.value === value);
+    return option ? option.label : value || "Select payment terms";
+  }, [value]);
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -47,7 +53,7 @@ export function PaymentTermsSelector({
           aria-expanded={open}
           className="w-full justify-between"
         >
-          {value || "Select payment terms"}
+          {displayValue}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
