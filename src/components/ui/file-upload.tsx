@@ -1,7 +1,7 @@
 
 import { useRef, useState } from "react";
 import { Button } from "./button";
-import { Upload, Check, AlertCircle } from "lucide-react";
+import { Upload, Check, AlertCircle, Image } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface FileUploadProps {
@@ -9,6 +9,9 @@ interface FileUploadProps {
   maxSizeMB?: number;
   allowedTypes?: string[];
   className?: string;
+  showFormatInfo?: boolean;
+  buttonVariant?: "default" | "outline" | "secondary" | "custom";
+  buttonText?: string;
 }
 
 export function FileUpload({
@@ -16,6 +19,9 @@ export function FileUpload({
   maxSizeMB = 1,
   allowedTypes = ["image/jpeg", "image/png", "image/svg+xml"],
   className,
+  showFormatInfo = true,
+  buttonVariant = "outline",
+  buttonText = "Upload",
 }: FileUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
@@ -49,6 +55,17 @@ export function FileUpload({
     onFileSelected(file);
   };
 
+  const getButtonClassName = () => {
+    if (buttonVariant === "custom") {
+      return "w-full bg-yellow-400 hover:bg-yellow-500 text-black font-medium py-2.5 rounded-md";
+    }
+    return cn(
+      "w-full",
+      buttonVariant === "outline" && "border-dashed",
+      error ? "border-destructive" : success ? "border-green-500" : ""
+    );
+  };
+
   return (
     <div className={cn("flex flex-col items-center", className)}>
       <input
@@ -58,21 +75,19 @@ export function FileUpload({
         accept={allowedTypes.join(",")}
         className="hidden"
       />
+      
       <Button 
         type="button" 
         onClick={handleClick} 
-        variant="outline"
-        className={cn(
-          "w-full border-dashed",
-          error ? "border-destructive" : success ? "border-green-500" : ""
-        )}
+        variant={buttonVariant === "custom" ? "outline" : buttonVariant}
+        className={getButtonClassName()}
       >
         {success ? (
           <Check className="mr-2 h-4 w-4 text-green-500" />
         ) : (
           <Upload className="mr-2 h-4 w-4" />
         )}
-        Upload
+        {buttonText}
       </Button>
       
       {error && (
@@ -84,6 +99,12 @@ export function FileUpload({
       
       {success && (
         <p className="text-green-500 text-sm mt-1">File uploaded successfully</p>
+      )}
+      
+      {showFormatInfo && (
+        <div className="text-center text-gray-500 text-xs mt-4">
+          Max upload size: {maxSizeMB} MB
+        </div>
       )}
     </div>
   );
