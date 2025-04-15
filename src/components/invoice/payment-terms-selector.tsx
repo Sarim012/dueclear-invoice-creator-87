@@ -38,11 +38,16 @@ export function PaymentTermsSelector({
 }: PaymentTermsSelectorProps) {
   const [open, setOpen] = React.useState(false);
 
-  // Find the display label based on selected value or use empty string if not found
+  // Safely memo-ize the display value
   const displayValue = React.useMemo(() => {
     const option = paymentTermsOptions.find(opt => opt.value === value);
     return option ? option.label : value || "Select payment terms";
   }, [value]);
+
+  // Safely memo-ize the options
+  const options = React.useMemo(() => {
+    return paymentTermsOptions || [];
+  }, []);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -62,7 +67,7 @@ export function PaymentTermsSelector({
           <CommandInput placeholder="Search payment terms..." />
           <CommandEmpty>No payment terms found.</CommandEmpty>
           <CommandGroup>
-            {paymentTermsOptions.map((option) => (
+            {options.map((option) => (
               <CommandItem
                 key={option.value}
                 value={option.value}
