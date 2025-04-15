@@ -9,6 +9,7 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
+  CommandList,
 } from "@/components/ui/command";
 import {
   Popover,
@@ -69,47 +70,49 @@ export function CurrencySelector({ value, onValueChange }: CurrencySelectorProps
               onValueChange={setSearchTerm}
             />
           </div>
-          <CommandEmpty>No currency found.</CommandEmpty>
-          <CommandGroup heading="Common Currencies">
-            {displayCommonCurrencies.map((currency) => (
-              <CommandItem
-                key={currency.code}
-                value={currency.code}
-                onSelect={() => {
-                  onValueChange(currency.code);
-                  setOpen(false);
-                }}
-              >
-                <Check
-                  className={cn(
-                    "mr-2 h-4 w-4",
-                    value === currency.code ? "opacity-100" : "opacity-0"
-                  )}
-                />
-                {currency.code} ({currency.symbol}) - {currency.name}
-              </CommandItem>
-            ))}
-          </CommandGroup>
-          <CommandGroup heading="All Currencies">
-            {displayAllCurrencies.map((currency) => (
-              <CommandItem
-                key={currency.code}
-                value={currency.code}
-                onSelect={() => {
-                  onValueChange(currency.code);
-                  setOpen(false);
-                }}
-              >
-                <Check
-                  className={cn(
-                    "mr-2 h-4 w-4",
-                    value === currency.code ? "opacity-100" : "opacity-0"
-                  )}
-                />
-                {currency.code} ({currency.symbol}) - {currency.name}
-              </CommandItem>
-            ))}
-          </CommandGroup>
+          <CommandList>
+            <CommandEmpty>No currency found.</CommandEmpty>
+            <CommandGroup heading="Common Currencies">
+              {displayCommonCurrencies.map((currency) => (
+                <CommandItem
+                  key={currency.code}
+                  value={currency.code}
+                  onSelect={() => {
+                    onValueChange(currency.code);
+                    setOpen(false);
+                  }}
+                >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      value === currency.code ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                  {currency.code} ({currency.symbol}) - {currency.name}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+            <CommandGroup heading="All Currencies">
+              {displayAllCurrencies.map((currency) => (
+                <CommandItem
+                  key={currency.code}
+                  value={currency.code}
+                  onSelect={() => {
+                    onValueChange(currency.code);
+                    setOpen(false);
+                  }}
+                >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      value === currency.code ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                  {currency.code} ({currency.symbol}) - {currency.name}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
         </Command>
       </PopoverContent>
     </Popover>
