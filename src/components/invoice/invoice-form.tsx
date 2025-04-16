@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { format, addDays } from "date-fns";
@@ -232,7 +231,7 @@ export function InvoiceForm({ onSubmit, onCancel }: InvoiceFormProps) {
                             onFileSelected={handleLogoUpload}
                             maxSizeMB={1}
                             allowedTypes={["image/jpeg", "image/png", "image/svg+xml"]}
-                            buttonVariant="custom"
+                            buttonVariant="black"
                             buttonText="Upload"
                             showFormatInfo={false}
                             className="mt-4"

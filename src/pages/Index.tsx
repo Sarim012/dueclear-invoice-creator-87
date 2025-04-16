@@ -10,8 +10,7 @@ import { generateInvoicePDF } from "@/utils/pdf-generator";
 const Index = () => {
   const { invoices, addInvoice } = useInvoices();
   const { toast } = useToast();
-  const [isCreatingInvoice, setIsCreatingInvoice] = useState(false);
-
+  
   const handleSubmit = async (invoice: Invoice) => {
     // Add the invoice to the context
     addInvoice(invoice);
@@ -33,13 +32,10 @@ const Index = () => {
         variant: "destructive",
       });
     }
-    
-    // Return to the dashboard
-    setIsCreatingInvoice(false);
   };
 
   const handleCancel = () => {
-    setIsCreatingInvoice(false);
+    // No action needed since we're already on the main page
   };
 
   const handleViewInvoice = (invoiceId: string) => {
@@ -67,28 +63,18 @@ const Index = () => {
 
   return (
     <div className="container mx-auto py-6 px-4 md:px-6">
-      {isCreatingInvoice ? (
-        <div className="max-w-5xl mx-auto">
-          <InvoiceForm onSubmit={handleSubmit} onCancel={handleCancel} />
-        </div>
-      ) : (
-        <div className="space-y-8">
-          <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-bold tracking-tight">Invoices</h1>
-            <button
-              onClick={() => setIsCreatingInvoice(true)}
-              className="px-6 py-2 bg-black text-white rounded-md hover:bg-black/90 transition-colors"
-            >
-              Create New Invoice
-            </button>
-          </div>
-
+      <div className="max-w-5xl mx-auto">
+        {/* Display the invoice form directly */}
+        <InvoiceForm onSubmit={handleSubmit} onCancel={handleCancel} />
+        
+        {/* Recent Invoices section below the form */}
+        <div className="mt-8">
           <RecentInvoices 
             invoices={invoices} 
             onViewInvoice={handleViewInvoice} 
           />
         </div>
-      )}
+      </div>
     </div>
   );
 };
