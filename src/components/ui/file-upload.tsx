@@ -10,7 +10,7 @@ interface FileUploadProps {
   allowedTypes?: string[];
   className?: string;
   showFormatInfo?: boolean;
-  buttonVariant?: "default" | "outline" | "secondary" | "custom";
+  buttonVariant?: "default" | "outline" | "secondary" | "custom" | "black";
   buttonText?: string;
 }
 
@@ -59,6 +59,9 @@ export function FileUpload({
     if (buttonVariant === "custom") {
       return "w-full bg-yellow-400 hover:bg-yellow-500 text-black font-medium py-2.5 rounded-md";
     }
+    if (buttonVariant === "black") {
+      return "w-full bg-black text-white hover:bg-gray-800 font-medium py-2.5 rounded-md";
+    }
     return cn(
       "w-full",
       buttonVariant === "outline" && "border-dashed",
@@ -79,7 +82,7 @@ export function FileUpload({
       <Button 
         type="button" 
         onClick={handleClick} 
-        variant={buttonVariant === "custom" ? "outline" : buttonVariant}
+        variant={buttonVariant === "black" ? "default" : buttonVariant === "custom" ? "outline" : buttonVariant}
         className={getButtonClassName()}
       >
         {success ? (
