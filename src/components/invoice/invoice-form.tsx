@@ -58,9 +58,15 @@ export function InvoiceForm({ onSubmit, onCancel }: InvoiceFormProps) {
   const [shipping, setShipping] = useState(0);
   const [total, setTotal] = useState(0);
   
-  // Payment and additional info
+  // Payment method related states
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("Bank Transfer");
   const [bankDetails, setBankDetails] = useState("");
+  const [paypalId, setPaypalId] = useState("");
+  const [upiId, setUpiId] = useState("");
+  const [paymentLink, setPaymentLink] = useState("");
+  const [cashInstructions, setCashInstructions] = useState("");
+
+  // Payment and additional info
   const [notes, setNotes] = useState("");
   const [terms, setTerms] = useState("");
 
@@ -171,6 +177,10 @@ export function InvoiceForm({ onSubmit, onCancel }: InvoiceFormProps) {
       total,
       paymentMethod,
       bankDetails,
+      paypalId,
+      upiId,
+      paymentLink,
+      cashInstructions,
       notes,
       terms,
       createdAt: new Date(),
@@ -498,21 +508,17 @@ export function InvoiceForm({ onSubmit, onCancel }: InvoiceFormProps) {
           <PaymentMethodSelector
             value={paymentMethod}
             onChange={setPaymentMethod}
+            bankDetails={bankDetails}
+            onBankDetailsChange={setBankDetails}
+            paypalId={paypalId}
+            onPaypalIdChange={setPaypalId}
+            upiId={upiId}
+            onUpiIdChange={setUpiId}
+            paymentLink={paymentLink}
+            onPaymentLinkChange={setPaymentLink}
+            cashInstructions={cashInstructions}
+            onCashInstructionsChange={setCashInstructions}
           />
-          
-          {paymentMethod === "Bank Transfer" && (
-            <div className="mt-4">
-              <Label htmlFor="bankDetails">Enter bank details</Label>
-              <Textarea
-                id="bankDetails"
-                placeholder="Bank Name, Account Holder Name, Account Number, Account Type, IFSC/SWIFT Code, IBAN, etc..."
-                rows={4}
-                value={bankDetails}
-                onChange={(e) => setBankDetails(e.target.value)}
-                className="bg-white"
-              />
-            </div>
-          )}
         </div>
 
         {/* Notes and Terms */}

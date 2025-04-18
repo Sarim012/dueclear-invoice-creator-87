@@ -34,6 +34,10 @@ export interface Invoice {
   total: number;
   paymentMethod: PaymentMethod;
   bankDetails?: string;
+  paypalId?: string;
+  upiId?: string;
+  paymentLink?: string;
+  cashInstructions?: string;
   notes?: string;
   terms?: string;
   createdAt: Date;
