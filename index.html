@@ -1,26 +1,1253 @@
+
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>dueclear-invoice-creator</title>
-    <meta name="description" content="Lovable Generated Project" />
-    <meta name="author" content="Lovable" />
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoice Generator</title>
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- jsPDF library for PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- html2canvas for PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
+  <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f9fafb;
+    }
+    
+    .invoice-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #374151;
+    }
+    
+    input, select, textarea {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.375rem;
+      background-color: white;
+    }
+    
+    button {
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-primary {
+      background-color: #000;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      font-weight: 500;
+    }
+    
+    .btn-primary:hover {
+      background-color: #333;
+    }
+    
+    .btn-outline {
+      background-color: white;
+      color: #374151;
+      border: 1px solid #d1d5db;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      font-weight: 500;
+    }
+    
+    .btn-outline:hover {
+      background-color: #f3f4f6;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    th {
+      text-align: left;
+      padding: 0.75rem 0.5rem;
+      border-bottom: 1px solid #e5e7eb;
+      font-weight: 500;
+      color: #4b5563;
+    }
+    
+    td {
+      padding: 0.75rem 0.5rem;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .toast {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      background-color: #10b981;
+      color: white;
+      padding: 1rem;
+      border-radius: 0.375rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      z-index: 50;
+      display: none;
+    }
+    
+    .toast.error {
+      background-color: #ef4444;
+    }
+    
+    /* Additional utility classes */
+    .hidden {
+      display: none;
+    }
+    
+    .flex {
+      display: flex;
+    }
+    
+    .items-center {
+      align-items: center;
+    }
+    
+    .justify-between {
+      justify-content: space-between;
+    }
+    
+    .w-full {
+      width: 100%;
+    }
+    
+    .text-right {
+      text-align: right;
+    }
+    
+    .font-bold {
+      font-weight: 700;
+    }
+    
+    .text-xl {
+      font-size: 1.25rem;
+    }
+    
+    .mt-4 {
+      margin-top: 1rem;
+    }
+    
+    .mb-4 {
+      margin-bottom: 1rem;
+    }
+    
+    .px-4 {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+    
+    .py-6 {
+      padding-top: 1.5rem;
+      padding-bottom: 1.5rem;
+    }
+    
+    .text-primary {
+      color: #2563eb;
+    }
+    
+    .border-t {
+      border-top: 1px solid #e5e7eb;
+    }
+    
+    .pt-4 {
+      padding-top: 1rem;
+    }
+    
+    /* Radio button styles */
+    .radio-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+    }
+    
+    .radio-container input {
+      width: auto;
+      margin-right: 0.5rem;
+    }
+    
+    /* Recent invoices */
+    .invoice-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.375rem;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .invoice-item:hover {
+      background-color: #f3f4f6;
+    }
+    
+    .text-muted {
+      color: #6b7280;
+    }
+    
+    @media (max-width: 768px) {
+      .grid-cols-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container mx-auto py-6 px-4">
+    <div id="app" class="max-w-5xl mx-auto">
+      <!-- Invoice Form -->
+      <form id="invoiceForm" class="space-y-6 invoice-container px-4 py-6">
+        <div>
+          <h2 class="text-2xl font-bold mb-2">Create New Invoice</h2>
+          <h3 class="text-lg font-medium mb-2">Invoice Details</h3>
+        </div>
 
-    <meta property="og:title" content="dueclear-invoice-creator" />
-    <meta property="og:description" content="Lovable Generated Project" />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+        <!-- Main Invoice Details -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- Logo Upload Section -->
+          <div>
+            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center space-y-4">
+              <div id="logoPreview" class="hidden">
+                <img id="logoImage" class="w-24 h-24 object-contain" alt="Uploaded logo">
+                <button type="button" id="removeLogoBtn" class="btn-outline mt-4">
+                  Remove
+                </button>
+              </div>
+              
+              <div id="logoUpload">
+                <div class="flex flex-col items-center space-y-4">
+                  <i class="fas fa-image text-gray-400 text-4xl"></i>
+                  <div class="text-center space-y-2">
+                    <p class="text-base text-gray-500">Upload logo</p>
+                    <p class="text-sm text-gray-400">
+                      Supported formats: JPG, PNG, SVG
+                    </p>
+                    <p class="text-sm text-gray-400">
+                      Recommended size: 500px × 500px
+                    </p>
+                    <input 
+                      type="file" 
+                      id="logoInput" 
+                      accept="image/jpeg, image/png, image/svg+xml" 
+                      class="hidden"
+                    >
+                    <button type="button" id="uploadLogoBtn" class="btn-primary mt-4">
+                      Upload
+                    </button>
+                    <p class="text-xs text-gray-400 mt-4">
+                      Max upload size: 1 MB
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@lovable_dev" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-  </head>
+          <!-- Invoice Details Right Side -->
+          <div class="md:col-span-2">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="form-group">
+                <label for="invoiceNumber">Invoice Number</label>
+                <input
+                  id="invoiceNumber"
+                  type="text"
+                  value="INV-0001"
+                  class="form-control"
+                >
+              </div>
+              
+              <div class="form-group">
+                <label for="paymentTerms">Payment Terms</label>
+                <select id="paymentTerms" class="form-control">
+                  <option value="NET7">NET7</option>
+                  <option value="NET15">NET15</option>
+                  <option value="NET30" selected>NET30</option>
+                  <option value="NET45">NET45</option>
+                  <option value="NET60">NET60</option>
+                  <option value="NET90">NET90</option>
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label for="issueDate">Issue Date</label>
+                <input
+                  id="issueDate"
+                  type="date"
+                  class="form-control"
+                >
+              </div>
+              
+              <div class="form-group">
+                <label for="dueDate">Due Date</label>
+                <input
+                  id="dueDate"
+                  type="date"
+                  class="form-control"
+                >
+              </div>
+              
+              <div class="form-group">
+                <label for="currency">Currency</label>
+                <select id="currency" class="form-control">
+                  <option value="USD" selected>USD ($)</option>
+                  <option value="EUR">EUR (€)</option>
+                  <option value="GBP">GBP (£)</option>
+                  <option value="INR">INR (₹)</option>
+                  <option value="JPY">JPY (¥)</option>
+                  <option value="CAD">CAD ($)</option>
+                  <option value="AUD">AUD ($)</option>
+                  <option value="CNY">CNY (¥)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
 
-  <body>
-    <div id="root"></div>
-    <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
-    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+        <!-- Business and Client Details -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="form-group">
+            <label for="businessDetails">Invoice From</label>
+            <p class="text-sm text-muted">Your Business Details</p>
+            <textarea
+              id="businessDetails"
+              rows="4"
+              placeholder="Business Name, Address, Phone, Email, TAX ID, etc."
+              class="form-control"
+            ></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label for="clientDetails">Bill To</label>
+            <p class="text-sm text-muted">Client Details</p>
+            <textarea
+              id="clientDetails"
+              rows="4"
+              placeholder="Client/Business Name, Address, Phone, Email, TAX ID, etc."
+              class="form-control"
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Invoice Items -->
+        <div class="space-y-4">
+          <h3 class="text-lg font-medium">Items</h3>
+          
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr class="text-left border-b">
+                  <th class="py-2 font-medium text-sm">Item Description</th>
+                  <th class="py-2 font-medium text-sm text-center w-16">Qty</th>
+                  <th class="py-2 font-medium text-sm text-center w-24">Rate</th>
+                  <th class="py-2 font-medium text-sm text-center w-24">Discount</th>
+                  <th class="py-2 font-medium text-sm text-right w-28">Amount</th>
+                  <th class="py-2 w-10"></th>
+                </tr>
+              </thead>
+              <tbody id="itemsContainer">
+                <!-- Items will be added here -->
+              </tbody>
+            </table>
+          </div>
+          
+          <button
+            type="button"
+            id="addItemBtn"
+            class="btn-outline text-primary"
+          >
+            <i class="fas fa-plus mr-2"></i>
+            Add Item
+          </button>
+        </div>
+
+        <!-- Summary Calculations -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div></div> <!-- Empty div for alignment -->
+          <div class="space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="font-medium">Subtotal:</span>
+              <span id="subtotalDisplay">$0.00</span>
+            </div>
+            
+            <div class="flex justify-between items-center">
+              <span>Discount:</span>
+              <div class="flex items-center space-x-2 w-28">
+                <input
+                  type="number"
+                  id="discountPercent"
+                  min="0"
+                  max="100"
+                  value="0"
+                  class="w-full text-right"
+                >
+                <span>%</span>
+              </div>
+            </div>
+            
+            <div class="flex justify-between items-center">
+              <span>Tax:</span>
+              <div class="flex items-center space-x-2 w-28">
+                <input
+                  type="number"
+                  id="taxPercent"
+                  min="0"
+                  max="100"
+                  value="0"
+                  class="w-full text-right"
+                >
+                <span>%</span>
+              </div>
+            </div>
+            
+            <div class="flex justify-between items-center">
+              <span>Shipping:</span>
+              <div class="w-28">
+                <input
+                  type="number"
+                  id="shipping"
+                  min="0"
+                  value="0"
+                  class="w-full text-right"
+                >
+              </div>
+            </div>
+            
+            <div class="border-t pt-4"></div>
+            
+            <div class="flex justify-between font-bold">
+              <span>Total:</span>
+              <span id="totalDisplay" class="text-xl text-primary">$0.00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Method -->
+        <div class="space-y-4">
+          <h3 class="text-lg font-medium">How does this invoice get paid?</h3>
+          
+          <div id="paymentMethodContainer">
+            <div class="space-y-3">
+              <div class="radio-container">
+                <input type="radio" id="bankTransfer" name="paymentMethod" value="Bank Transfer" checked>
+                <label for="bankTransfer" class="cursor-pointer">
+                  <i class="fas fa-university mr-2"></i>
+                  Bank Transfer
+                </label>
+              </div>
+              
+              <div class="radio-container">
+                <input type="radio" id="paypal" name="paymentMethod" value="PayPal">
+                <label for="paypal" class="cursor-pointer">
+                  <i class="fab fa-paypal mr-2"></i>
+                  PayPal
+                </label>
+              </div>
+              
+              <div class="radio-container">
+                <input type="radio" id="upi" name="paymentMethod" value="UPI">
+                <label for="upi" class="cursor-pointer">
+                  <i class="fas fa-mobile-alt mr-2"></i>
+                  UPI
+                </label>
+              </div>
+              
+              <div class="radio-container">
+                <input type="radio" id="paymentLink" name="paymentMethod" value="Payment Link">
+                <label for="paymentLink" class="cursor-pointer">
+                  <i class="fas fa-link mr-2"></i>
+                  Payment Link
+                </label>
+              </div>
+              
+              <div class="radio-container">
+                <input type="radio" id="cash" name="paymentMethod" value="Cash">
+                <label for="cash" class="cursor-pointer">
+                  <i class="fas fa-money-bill-wave mr-2"></i>
+                  Cash
+                </label>
+              </div>
+            </div>
+
+            <!-- Payment method details containers -->
+            <div id="bankDetailsContainer" class="mt-4">
+              <label for="bankDetails">Enter bank details</label>
+              <textarea
+                id="bankDetails"
+                placeholder="Bank Name, Account Holder Name, Account Number, Account Type, IFSC/SWIFT Code, IBAN, etc..."
+                rows="4"
+                class="mt-1.5"
+              ></textarea>
+            </div>
+
+            <div id="paypalIdContainer" class="mt-4 hidden">
+              <label for="paypalId">Enter PayPal ID</label>
+              <input
+                id="paypalId"
+                placeholder="example@domain.com"
+                class="mt-1.5"
+              >
+            </div>
+
+            <div id="upiIdContainer" class="mt-4 hidden">
+              <label for="upiId">Enter UPI ID</label>
+              <input
+                id="upiId"
+                placeholder="username@upi"
+                class="mt-1.5"
+              >
+            </div>
+
+            <div id="paymentLinkContainer" class="mt-4 hidden">
+              <label for="paymentLink">Enter Payment Link</label>
+              <input
+                id="paymentLinkInput"
+                placeholder="https://"
+                class="mt-1.5"
+              >
+            </div>
+
+            <div id="cashInstructionsContainer" class="mt-4 hidden">
+              <label for="cashInstructions">Cash Payment Instructions</label>
+              <textarea
+                id="cashInstructions"
+                placeholder="Enter instructions for cash payment..."
+                rows="4"
+                class="mt-1.5"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notes and Terms -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="form-group">
+            <label for="notes">Notes</label>
+            <textarea
+              id="notes"
+              placeholder="Notes to be displayed on the invoice"
+              rows="4"
+              class="form-control"
+            ></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label for="terms">Terms</label>
+            <textarea
+              id="terms"
+              placeholder="Terms and conditions for this invoice"
+              rows="4"
+              class="form-control"
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="flex justify-end space-x-4">
+          <button type="button" id="resetBtn" class="btn-outline">
+            Reset
+          </button>
+          <button type="submit" id="createInvoiceBtn" class="btn-primary">
+            Create Invoice
+          </button>
+        </div>
+      </form>
+
+      <!-- Recent Invoices section below the form -->
+      <div class="mt-8 invoice-container px-4 py-6">
+        <div class="flex items-center mb-4">
+          <i class="fas fa-file-invoice text-primary mr-2"></i>
+          <h3 class="text-lg font-medium">Recent Invoices</h3>
+        </div>
+        
+        <div id="recentInvoicesContainer">
+          <!-- Recent invoices will be added here -->
+          <div id="noInvoicesMessage" class="flex flex-col items-center justify-center py-10 text-muted">
+            <i class="fas fa-file text-4xl mb-4 text-gray-300"></i>
+            <p class="mb-2 text-base">No invoices yet</p>
+            <p class="text-sm">Your recent invoices will appear here</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast notifications -->
+  <div id="toast" class="toast">
+    <div id="toastMessage"></div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize date fields with current date and due date (30 days later)
+      const today = new Date();
+      const dueDate = new Date();
+      dueDate.setDate(today.getDate() + 30);
+      
+      document.getElementById('issueDate').valueAsDate = today;
+      document.getElementById('dueDate').valueAsDate = dueDate;
+      
+      // Global variables
+      let invoices = JSON.parse(localStorage.getItem('invoices') || '[]');
+      let logoUrl = null;
+      let items = [createNewItem()];
+      
+      // Initialize
+      renderItems();
+      renderRecentInvoices();
+      setupEventListeners();
+      
+      // Item creation helper
+      function createNewItem() {
+        return {
+          id: Date.now().toString(),
+          description: '',
+          quantity: 1,
+          rate: 0,
+          discount: 0,
+          amount: 0
+        };
+      }
+      
+      // Setup all event listeners
+      function setupEventListeners() {
+        // Logo upload functionality
+        document.getElementById('uploadLogoBtn').addEventListener('click', () => {
+          document.getElementById('logoInput').click();
+        });
+        
+        document.getElementById('logoInput').addEventListener('change', handleLogoUpload);
+        document.getElementById('removeLogoBtn').addEventListener('click', removeLogo);
+        
+        // Invoice items functionality
+        document.getElementById('addItemBtn').addEventListener('click', addItem);
+        
+        // Payment method selection
+        const paymentMethods = document.querySelectorAll('input[name="paymentMethod"]');
+        paymentMethods.forEach(method => {
+          method.addEventListener('change', updatePaymentMethodFields);
+        });
+        
+        // Form submission
+        document.getElementById('invoiceForm').addEventListener('submit', handleFormSubmit);
+        
+        // Reset form
+        document.getElementById('resetBtn').addEventListener('click', resetForm);
+        
+        // Calculate totals when inputs change
+        document.getElementById('discountPercent').addEventListener('input', updateCalculations);
+        document.getElementById('taxPercent').addEventListener('input', updateCalculations);
+        document.getElementById('shipping').addEventListener('input', updateCalculations);
+      }
+      
+      // Logo handling functions
+      function handleLogoUpload(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        // Check file size (max 1 MB)
+        if (file.size > 1024 * 1024) {
+          showToast('File size exceeds 1 MB limit', true);
+          return;
+        }
+        
+        // Create preview
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          logoUrl = event.target.result;
+          document.getElementById('logoImage').src = logoUrl;
+          document.getElementById('logoPreview').classList.remove('hidden');
+          document.getElementById('logoUpload').classList.add('hidden');
+        };
+        reader.readAsDataURL(file);
+      }
+      
+      function removeLogo() {
+        logoUrl = null;
+        document.getElementById('logoInput').value = '';
+        document.getElementById('logoPreview').classList.add('hidden');
+        document.getElementById('logoUpload').classList.remove('hidden');
+      }
+      
+      // Invoice items functions
+      function renderItems() {
+        const container = document.getElementById('itemsContainer');
+        container.innerHTML = '';
+        
+        items.forEach((item, index) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>
+              <input type="text" class="w-full" value="${item.description}" placeholder="Item description" onInput="updateItemDescription(${index}, this.value)">
+            </td>
+            <td>
+              <input type="number" min="1" class="w-full text-center" value="${item.quantity}" onInput="updateItemQuantity(${index}, this.value)">
+            </td>
+            <td>
+              <input type="number" min="0" step="0.01" class="w-full text-center" value="${item.rate}" onInput="updateItemRate(${index}, this.value)">
+            </td>
+            <td>
+              <div class="flex items-center">
+                <input type="number" min="0" max="100" class="w-full text-center" value="${item.discount}" onInput="updateItemDiscount(${index}, this.value)">
+                <span class="ml-1">%</span>
+              </div>
+            </td>
+            <td class="text-right">${formatCurrency(item.amount)}</td>
+            <td>
+              <button type="button" class="text-red-500 hover:text-red-700" ${items.length === 1 ? 'disabled' : ''} onClick="removeItem(${index})">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          `;
+          container.appendChild(row);
+        });
+        
+        // Make the item update functions available globally
+        window.updateItemDescription = updateItemDescription;
+        window.updateItemQuantity = updateItemQuantity;
+        window.updateItemRate = updateItemRate;
+        window.updateItemDiscount = updateItemDiscount;
+        window.removeItem = removeItem;
+        
+        updateCalculations();
+      }
+      
+      function addItem() {
+        items.push(createNewItem());
+        renderItems();
+      }
+      
+      function updateItemDescription(index, value) {
+        items[index].description = value;
+      }
+      
+      function updateItemQuantity(index, value) {
+        items[index].quantity = parseInt(value) || 0;
+        calculateItemAmount(index);
+        renderItems();
+      }
+      
+      function updateItemRate(index, value) {
+        items[index].rate = parseFloat(value) || 0;
+        calculateItemAmount(index);
+        renderItems();
+      }
+      
+      function updateItemDiscount(index, value) {
+        items[index].discount = parseInt(value) || 0;
+        calculateItemAmount(index);
+        renderItems();
+      }
+      
+      function calculateItemAmount(index) {
+        const item = items[index];
+        const discountMultiplier = (100 - item.discount) / 100;
+        item.amount = item.quantity * item.rate * discountMultiplier;
+      }
+      
+      function removeItem(index) {
+        if (items.length > 1) {
+          items.splice(index, 1);
+          renderItems();
+        }
+      }
+      
+      // Payment method functions
+      function updatePaymentMethodFields() {
+        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+        
+        // Hide all containers
+        document.getElementById('bankDetailsContainer').classList.add('hidden');
+        document.getElementById('paypalIdContainer').classList.add('hidden');
+        document.getElementById('upiIdContainer').classList.add('hidden');
+        document.getElementById('paymentLinkContainer').classList.add('hidden');
+        document.getElementById('cashInstructionsContainer').classList.add('hidden');
+        
+        // Show relevant container
+        switch (paymentMethod) {
+          case 'Bank Transfer':
+            document.getElementById('bankDetailsContainer').classList.remove('hidden');
+            break;
+          case 'PayPal':
+            document.getElementById('paypalIdContainer').classList.remove('hidden');
+            break;
+          case 'UPI':
+            document.getElementById('upiIdContainer').classList.remove('hidden');
+            break;
+          case 'Payment Link':
+            document.getElementById('paymentLinkContainer').classList.remove('hidden');
+            break;
+          case 'Cash':
+            document.getElementById('cashInstructionsContainer').classList.remove('hidden');
+            break;
+        }
+      }
+      
+      // Calculation functions
+      function updateCalculations() {
+        const subtotal = calculateSubtotal();
+        const discountPercent = parseInt(document.getElementById('discountPercent').value) || 0;
+        const taxPercent = parseInt(document.getElementById('taxPercent').value) || 0;
+        const shipping = parseFloat(document.getElementById('shipping').value) || 0;
+        
+        const discountAmount = subtotal * (discountPercent / 100);
+        const afterDiscount = subtotal - discountAmount;
+        const taxAmount = afterDiscount * (taxPercent / 100);
+        const total = afterDiscount + taxAmount + shipping;
+        
+        document.getElementById('subtotalDisplay').textContent = formatCurrency(subtotal);
+        document.getElementById('totalDisplay').textContent = formatCurrency(total);
+      }
+      
+      function calculateSubtotal() {
+        return items.reduce((sum, item) => sum + item.amount, 0);
+      }
+      
+      function formatCurrency(amount) {
+        const currency = document.getElementById('currency').value;
+        return new Intl.NumberFormat('en-US', { 
+          style: 'currency', 
+          currency: currency 
+        }).format(amount);
+      }
+      
+      // Form submission
+      function handleFormSubmit(e) {
+        e.preventDefault();
+        
+        // Validate form
+        if (!validateForm()) {
+          return;
+        }
+        
+        // Create invoice object
+        const invoice = createInvoiceObject();
+        
+        // Save to local storage
+        invoices.unshift(invoice);
+        localStorage.setItem('invoices', JSON.stringify(invoices));
+        
+        // Show success message
+        showToast('Invoice created successfully');
+        
+        // Generate PDF
+        generateInvoicePDF(invoice);
+        
+        // Update recent invoices display
+        renderRecentInvoices();
+        
+        // Reset the form
+        resetForm();
+      }
+      
+      function validateForm() {
+        // Check if there's at least one item with description and amount
+        const hasValidItems = items.some(item => 
+          item.description.trim() !== '' && item.amount > 0
+        );
+        
+        if (!hasValidItems) {
+          showToast('Please add at least one item with description and amount', true);
+          return false;
+        }
+        
+        // Check for client and business details
+        if (document.getElementById('businessDetails').value.trim() === '') {
+          showToast('Please enter your business details', true);
+          return false;
+        }
+        
+        if (document.getElementById('clientDetails').value.trim() === '') {
+          showToast('Please enter client details', true);
+          return false;
+        }
+        
+        return true;
+      }
+      
+      function createInvoiceObject() {
+        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+        
+        // Get payment details based on selected method
+        let paymentDetails = {};
+        switch (paymentMethod) {
+          case 'Bank Transfer':
+            paymentDetails.bankDetails = document.getElementById('bankDetails').value;
+            break;
+          case 'PayPal':
+            paymentDetails.paypalId = document.getElementById('paypalId').value;
+            break;
+          case 'UPI':
+            paymentDetails.upiId = document.getElementById('upiId').value;
+            break;
+          case 'Payment Link':
+            paymentDetails.paymentLink = document.getElementById('paymentLinkInput').value;
+            break;
+          case 'Cash':
+            paymentDetails.cashInstructions = document.getElementById('cashInstructions').value;
+            break;
+        }
+        
+        // Calculate totals
+        const subtotal = calculateSubtotal();
+        const discountPercent = parseInt(document.getElementById('discountPercent').value) || 0;
+        const taxPercent = parseInt(document.getElementById('taxPercent').value) || 0;
+        const shipping = parseFloat(document.getElementById('shipping').value) || 0;
+        
+        const discountAmount = subtotal * (discountPercent / 100);
+        const afterDiscount = subtotal - discountAmount;
+        const taxAmount = afterDiscount * (taxPercent / 100);
+        const total = afterDiscount + taxAmount + shipping;
+        
+        return {
+          id: Date.now().toString(),
+          createdAt: new Date().toISOString(),
+          logoUrl: logoUrl,
+          invoiceNumber: document.getElementById('invoiceNumber').value,
+          paymentTerms: document.getElementById('paymentTerms').value,
+          issueDate: document.getElementById('issueDate').value,
+          dueDate: document.getElementById('dueDate').value,
+          currency: document.getElementById('currency').value,
+          businessDetails: document.getElementById('businessDetails').value,
+          clientDetails: document.getElementById('clientDetails').value,
+          items: [...items],
+          subtotal: subtotal,
+          discount: discountPercent,
+          tax: taxPercent,
+          shipping: shipping,
+          total: total,
+          paymentMethod: paymentMethod,
+          ...paymentDetails,
+          notes: document.getElementById('notes').value,
+          terms: document.getElementById('terms').value
+        };
+      }
+      
+      // Reset form
+      function resetForm() {
+        document.getElementById('invoiceForm').reset();
+        
+        // Set dates
+        document.getElementById('issueDate').valueAsDate = new Date();
+        const newDueDate = new Date();
+        newDueDate.setDate(newDueDate.getDate() + 30);
+        document.getElementById('dueDate').valueAsDate = newDueDate;
+        
+        // Reset logo
+        removeLogo();
+        
+        // Reset items
+        items = [createNewItem()];
+        renderItems();
+        
+        // Reset payment method
+        document.getElementById('bankTransfer').checked = true;
+        updatePaymentMethodFields();
+        
+        // Update calculations
+        updateCalculations();
+      }
+      
+      // Recent invoices functions
+      function renderRecentInvoices() {
+        const container = document.getElementById('recentInvoicesContainer');
+        const noInvoicesMessage = document.getElementById('noInvoicesMessage');
+        
+        if (invoices.length === 0) {
+          container.innerHTML = '';
+          container.appendChild(noInvoicesMessage);
+          return;
+        }
+        
+        container.innerHTML = '';
+        
+        invoices.forEach(invoice => {
+          const invoiceEl = document.createElement('div');
+          invoiceEl.className = 'invoice-item';
+          
+          // Get the first line of client details as client name
+          const clientName = invoice.clientDetails.split('\n')[0];
+          
+          // Format date
+          const issueDate = new Date(invoice.issueDate);
+          const formattedDate = issueDate.toLocaleDateString('en-US', {
+            month: 'short',
+            day: '2-digit',
+            year: 'numeric'
+          });
+          
+          invoiceEl.innerHTML = `
+            <div>
+              <span class="font-medium">${invoice.invoiceNumber}</span>
+              <div class="text-sm text-muted">
+                ${clientName} - ${formattedDate}
+              </div>
+            </div>
+            <div class="font-medium">
+              ${formatCurrencyWithCode(invoice.total, invoice.currency)}
+            </div>
+          `;
+          
+          invoiceEl.addEventListener('click', () => {
+            generateInvoicePDF(invoice);
+          });
+          
+          container.appendChild(invoiceEl);
+        });
+      }
+      
+      function formatCurrencyWithCode(amount, currencyCode) {
+        return new Intl.NumberFormat('en-US', { 
+          style: 'currency', 
+          currency: currencyCode 
+        }).format(amount);
+      }
+      
+      // Toast notification
+      function showToast(message, isError = false) {
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        
+        toast.className = isError ? 'toast error' : 'toast';
+        toastMessage.textContent = message;
+        
+        toast.style.display = 'block';
+        
+        setTimeout(() => {
+          toast.style.display = 'none';
+        }, 3000);
+      }
+      
+      // PDF Generation
+      function generateInvoicePDF(invoice) {
+        const { jsPDF } = window.jspdf;
+        
+        // Create a temporary container for rendering the invoice
+        const container = document.createElement('div');
+        container.style.position = 'absolute';
+        container.style.left = '-9999px';
+        container.style.top = '-9999px';
+        container.style.width = '210mm'; // A4 width
+        document.body.appendChild(container);
+        
+        // Format date
+        const formatDate = (dateString) => {
+          const date = new Date(dateString);
+          return date.toLocaleDateString('en-US', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+          });
+        };
+        
+        // Format currency
+        const formatCurrency = (amount) => {
+          return new Intl.NumberFormat('en-US', { 
+            style: 'currency', 
+            currency: invoice.currency 
+          }).format(amount);
+        };
+        
+        // Create payment method details HTML
+        let paymentMethodHTML = '';
+        
+        switch (invoice.paymentMethod) {
+          case 'Bank Transfer':
+            if (invoice.bankDetails) {
+              paymentMethodHTML = `
+                <div style="margin-top: 30px; padding: 15px; background-color: #f9f9f9;">
+                  <h3 style="margin-top: 0;">Bank Transfer Payment:</h3>
+                  <pre style="font-family: Arial, sans-serif; white-space: pre-wrap;">${invoice.bankDetails}</pre>
+                </div>
+              `;
+            }
+            break;
+          case 'PayPal':
+            if (invoice.paypalId) {
+              paymentMethodHTML = `
+                <div style="margin-top: 30px; padding: 15px; background-color: #f9f9f9;">
+                  <h3 style="margin-top: 0;">PayPal Payment:</h3>
+                  <p>Please send payment to: ${invoice.paypalId}</p>
+                </div>
+              `;
+            }
+            break;
+          case 'UPI':
+            if (invoice.upiId) {
+              paymentMethodHTML = `
+                <div style="margin-top: 30px; padding: 15px; background-color: #f9f9f9;">
+                  <h3 style="margin-top: 0;">UPI Payment:</h3>
+                  <p>Please send payment to UPI ID: ${invoice.upiId}</p>
+                </div>
+              `;
+            }
+            break;
+          case 'Payment Link':
+            if (invoice.paymentLink) {
+              paymentMethodHTML = `
+                <div style="margin-top: 30px; padding: 15px; background-color: #f9f9f9;">
+                  <h3 style="margin-top: 0;">Online Payment:</h3>
+                  <p>Please make payment using this link: ${invoice.paymentLink}</p>
+                </div>
+              `;
+            }
+            break;
+          case 'Cash':
+            if (invoice.cashInstructions) {
+              paymentMethodHTML = `
+                <div style="margin-top: 30px; padding: 15px; background-color: #f9f9f9;">
+                  <h3 style="margin-top: 0;">Cash Payment:</h3>
+                  <p>${invoice.cashInstructions}</p>
+                </div>
+              `;
+            }
+            break;
+        }
+        
+        // Generate HTML content for the invoice
+        container.innerHTML = `
+          <div id="invoice-pdf" style="padding: 20px; font-family: Arial, sans-serif;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
+              ${invoice.logoUrl ? `<img src="${invoice.logoUrl}" alt="Company Logo" style="max-height: 80px;" />` : ''}
+              <div style="text-align: right;">
+                <h1 style="color: #333; margin: 0;">INVOICE</h1>
+                <p style="margin: 5px 0;">#${invoice.invoiceNumber}</p>
+                <p style="margin: 5px 0;">Issue Date: ${formatDate(invoice.issueDate)}</p>
+                <p style="margin: 5px 0;">Due Date: ${formatDate(invoice.dueDate)}</p>
+              </div>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
+              <div style="width: 45%; padding: 15px; background-color: #f9f9f9;">
+                <h3 style="margin-top: 0;">From</h3>
+                <pre style="font-family: Arial, sans-serif; white-space: pre-wrap;">${invoice.businessDetails}</pre>
+              </div>
+              <div style="width: 45%; padding: 15px; background-color: #f9f9f9;">
+                <h3 style="margin-top: 0;">Bill To</h3>
+                <pre style="font-family: Arial, sans-serif; white-space: pre-wrap;">${invoice.clientDetails}</pre>
+              </div>
+            </div>
+            
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+              <thead>
+                <tr style="background-color: #000; color: white;">
+                  <th style="padding: 10px; text-align: left;">DESCRIPTION</th>
+                  <th style="padding: 10px; text-align: center;">QTY</th>
+                  <th style="padding: 10px; text-align: center;">RATE</th>
+                  <th style="padding: 10px; text-align: center;">DISCOUNT</th>
+                  <th style="padding: 10px; text-align: right;">AMOUNT</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${invoice.items.map(item => `
+                  <tr style="border-bottom: 1px solid #ddd;">
+                    <td style="padding: 10px; text-align: left;">${item.description}</td>
+                    <td style="padding: 10px; text-align: center;">${item.quantity}</td>
+                    <td style="padding: 10px; text-align: center;">${item.rate.toFixed(2)}</td>
+                    <td style="padding: 10px; text-align: center;">${item.discount}%</td>
+                    <td style="padding: 10px; text-align: right;">${item.amount.toFixed(2)}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+            
+            <div style="display: flex; justify-content: flex-end;">
+              <div style="width: 300px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                  <span>Subtotal:</span>
+                  <span>${formatCurrency(invoice.subtotal)}</span>
+                </div>
+                ${invoice.discount > 0 ? `
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span>Discount (${invoice.discount}%):</span>
+                    <span>-${formatCurrency(invoice.subtotal * invoice.discount / 100)}</span>
+                  </div>
+                ` : ''}
+                ${invoice.tax > 0 ? `
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span>Tax (${invoice.tax}%):</span>
+                    <span>${formatCurrency(invoice.subtotal * (1 - invoice.discount / 100) * invoice.tax / 100)}</span>
+                  </div>
+                ` : ''}
+                ${invoice.shipping > 0 ? `
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span>Shipping:</span>
+                    <span>${formatCurrency(invoice.shipping)}</span>
+                  </div>
+                ` : ''}
+                <div style="display: flex; justify-content: space-between; font-weight: bold; margin-top: 10px; border-top: 1px solid #ddd; padding-top: 10px;">
+                  <span>Total:</span>
+                  <span>${formatCurrency(invoice.total)}</span>
+                </div>
+              </div>
+            </div>
+            
+            ${paymentMethodHTML}
+            
+            <div style="display: flex; justify-content: space-between; margin-top: 30px;">
+              ${invoice.notes ? `
+                <div style="width: 45%;">
+                  <h3>Notes</h3>
+                  <p>${invoice.notes}</p>
+                </div>
+              ` : ''}
+              ${invoice.terms ? `
+                <div style="width: 45%;">
+                  <h3>Terms & Conditions</h3>
+                  <p>${invoice.terms}</p>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `;
+        
+        // Use html2canvas to generate PDF
+        html2canvas(container.querySelector('#invoice-pdf')).then(canvas => {
+          const imgData = canvas.toDataURL('image/png');
+          const pdf = new jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: 'a4',
+          });
+          
+          // Calculate the required height and width to maintain aspect ratio
+          const imgWidth = pdf.internal.pageSize.getWidth();
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+          
+          pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+          
+          // Download the PDF
+          pdf.save(`Invoice_${invoice.invoiceNumber}.pdf`);
+          
+          // Clean up the temporary container
+          document.body.removeChild(container);
+        });
+      }
+    });
+  </script>
+</body>
 </html>
