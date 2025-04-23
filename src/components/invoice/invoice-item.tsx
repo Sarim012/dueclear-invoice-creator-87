@@ -44,16 +44,16 @@ export function InvoiceItemRow({
   }, [description, quantity, rate, discount, onChange, item]);
 
   return (
-    <div className="grid grid-cols-12 gap-2 items-center mb-2">
-      <div className="col-span-4 sm:col-span-5">
+    <tr className="border-b">
+      <td className="py-2 pr-2">
         <Input
           placeholder="Item description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
-      </div>
+      </td>
       
-      <div className="col-span-2 sm:col-span-1">
+      <td className="py-2 px-2 w-16">
         <Input
           type="number"
           min="0"
@@ -61,9 +61,9 @@ export function InvoiceItemRow({
           value={quantity}
           onChange={(e) => setQuantity(e.target.value)}
         />
-      </div>
+      </td>
       
-      <div className="col-span-2">
+      <td className="py-2 px-2 w-24">
         <Input
           type="number"
           min="0"
@@ -71,26 +71,28 @@ export function InvoiceItemRow({
           value={rate}
           onChange={(e) => setRate(e.target.value)}
         />
-      </div>
+      </td>
       
-      <div className="col-span-2 flex items-center">
-        <Input
-          type="number"
-          min="0"
-          max="100"
-          placeholder="0"
-          value={discount}
-          onChange={(e) => setDiscount(e.target.value)}
-          className="w-full"
-        />
-        <span className="ml-1">%</span>
-      </div>
+      <td className="py-2 px-2 w-24">
+        <div className="flex items-center">
+          <Input
+            type="number"
+            min="0"
+            max="100"
+            placeholder="0"
+            value={discount}
+            onChange={(e) => setDiscount(e.target.value)}
+            className="w-full"
+          />
+          <span className="ml-1">%</span>
+        </div>
+      </td>
       
-      <div className="col-span-1 text-right whitespace-nowrap">
+      <td className="py-2 px-2 w-28 text-right whitespace-nowrap">
         {formatCurrency(item.amount || 0, currency)}
-      </div>
+      </td>
       
-      <div className="col-span-1 flex justify-end">
+      <td className="py-2 pl-2 w-10">
         <Button 
           variant="ghost" 
           size="icon" 
@@ -99,7 +101,7 @@ export function InvoiceItemRow({
         >
           <Trash2 className="h-4 w-4" />
         </Button>
-      </div>
-    </div>
+      </td>
+    </tr>
   );
 }

@@ -25,7 +25,7 @@ export function NotesAndTerms({
           rows={4}
           value={notes}
           onChange={(e) => onNotesChange(e.target.value)}
-          className="bg-white"
+          className="bg-white resize-none"
         />
       </div>
       
@@ -37,7 +37,7 @@ export function NotesAndTerms({
           rows={4}
           value={terms}
           onChange={(e) => onTermsChange(e.target.value)}
-          className="bg-white"
+          className="bg-white resize-none"
         />
       </div>
     </div>

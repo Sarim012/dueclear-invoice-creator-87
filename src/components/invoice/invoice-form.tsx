@@ -10,9 +10,16 @@ import { InvoiceItemRow } from "./invoice-item";
 import { InvoiceSummary } from "./invoice-summary";
 import { PaymentMethodSelector } from "./payment-method-selector";
 import { NotesAndTerms } from "./notes-and-terms";
-import { Invoice, InvoiceItem, PaymentMethod } from "@/types/invoice";
+import { Invoice, InvoiceItem, PaymentMethod, PaymentTerms } from "@/types/invoice";
 import { calculateSubtotal, calculateTotal } from "@/utils/calculations";
 import { Plus } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface InvoiceFormProps {
   onSubmit: (invoice: Invoice) => void;
@@ -196,18 +203,18 @@ export function InvoiceForm({ onSubmit, onCancel }: InvoiceFormProps) {
           <h3 className="text-lg font-medium">Items</h3>
           
           <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="text-left border-b">
-                  <th className="py-2 font-medium text-sm">Item Description</th>
-                  <th className="py-2 font-medium text-sm text-center w-16">Qty</th>
-                  <th className="py-2 font-medium text-sm text-center w-24">Rate</th>
-                  <th className="py-2 font-medium text-sm text-center w-24">Discount</th>
-                  <th className="py-2 font-medium text-sm text-right w-28">Amount</th>
-                  <th className="py-2 w-10"></th>
-                </tr>
-              </thead>
-              <tbody>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Item Description</TableHead>
+                  <TableHead className="w-16 text-center">Qty</TableHead>
+                  <TableHead className="w-24 text-center">Rate</TableHead>
+                  <TableHead className="w-24 text-center">Discount</TableHead>
+                  <TableHead className="w-28 text-right">Amount</TableHead>
+                  <TableHead className="w-10"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {items.map((item) => (
                   <InvoiceItemRow
                     key={item.id}
@@ -217,8 +224,8 @@ export function InvoiceForm({ onSubmit, onCancel }: InvoiceFormProps) {
                     currency={currency}
                   />
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
           
           <Button
