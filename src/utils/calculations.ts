@@ -1,23 +1,26 @@
-
 import { InvoiceItem } from "../types/invoice";
 
 // Calculate the amount for a single item
 export const calculateItemAmount = (
   quantity: number,
   rate: number,
-  discount: number
+  discount: number,
+  discountType: "percent" | "amount" = "percent"
 ): number => {
   const subtotal = quantity * rate;
-  const discountAmount = (subtotal * discount) / 100;
+  let discountAmount = 0;
+  if (discountType === "percent") {
+    discountAmount = (subtotal * discount) / 100;
+  } else {
+    discountAmount = discount;
+  }
   return parseFloat((subtotal - discountAmount).toFixed(2));
 };
 
 // Calculate the subtotal of all items
 export const calculateSubtotal = (items: InvoiceItem[]): number => {
   return parseFloat(
-    items
-      .reduce((total, item) => total + (item.amount || 0), 0)
-      .toFixed(2)
+    items.reduce((total, item) => total + (item.amount || 0), 0).toFixed(2)
   );
 };
 
@@ -25,10 +28,16 @@ export const calculateSubtotal = (items: InvoiceItem[]): number => {
 export const calculateTotal = (
   subtotal: number,
   discount: number,
+  discountType: "percent" | "amount" = "percent",
   tax: number,
   shipping: number
 ): number => {
-  const discountAmount = (subtotal * discount) / 100;
+  let discountAmount = 0;
+  if (discountType === "percent") {
+    discountAmount = (subtotal * discount) / 100;
+  } else {
+    discountAmount = discount;
+  }
   const taxAmount = ((subtotal - discountAmount) * tax) / 100;
   return parseFloat(
     (subtotal - discountAmount + taxAmount + shipping).toFixed(2)

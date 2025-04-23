@@ -1,4 +1,3 @@
-
 // Define the data structure for invoice items
 export interface InvoiceItem {
   id: string;
@@ -6,6 +5,7 @@ export interface InvoiceItem {
   quantity: number;
   rate: number;
   discount: number;
+  discountType: "percent" | "amount"; // Add discountType
   amount: number;
 }
 

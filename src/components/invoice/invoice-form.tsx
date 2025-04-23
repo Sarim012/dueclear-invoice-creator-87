@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { format, addDays } from "date-fns";
@@ -46,13 +45,15 @@ export function InvoiceForm({ onSubmit, onCancel }: InvoiceFormProps) {
       quantity: 1,
       rate: 0,
       discount: 0,
+      discountType: "percent",
       amount: 0,
     },
   ]);
-  
+
   // Calculations state
   const [subtotal, setSubtotal] = useState(0);
   const [discountPercent, setDiscountPercent] = useState(0);
+  const [discountType, setDiscountType] = useState<"percent" | "amount">("percent");
   const [taxPercent, setTaxPercent] = useState(0);
   const [shipping, setShipping] = useState(0);
   const [total, setTotal] = useState(0);
@@ -86,6 +87,7 @@ export function InvoiceForm({ onSubmit, onCancel }: InvoiceFormProps) {
         quantity: 1,
         rate: 0,
         discount: 0,
+        discountType: "percent",
         amount: 0,
       },
     ]);
@@ -115,11 +117,12 @@ export function InvoiceForm({ onSubmit, onCancel }: InvoiceFormProps) {
     const newTotal = calculateTotal(
       subtotal,
       discountPercent,
+      discountType,
       taxPercent,
       shipping
     );
     setTotal(newTotal);
-  }, [subtotal, discountPercent, taxPercent, shipping]);
+  }, [subtotal, discountPercent, discountType, taxPercent, shipping]);
 
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
@@ -150,6 +153,7 @@ export function InvoiceForm({ onSubmit, onCancel }: InvoiceFormProps) {
       notes,
       terms,
       createdAt: new Date(),
+      // Note: discountType is only used in calculation, not saved directly to Invoice as per interface
     };
     
     onSubmit(invoice);
@@ -209,7 +213,7 @@ export function InvoiceForm({ onSubmit, onCancel }: InvoiceFormProps) {
                   <TableHead>Item Description</TableHead>
                   <TableHead className="w-16 text-center">Qty</TableHead>
                   <TableHead className="w-24 text-center">Rate</TableHead>
-                  <TableHead className="w-24 text-center">Discount</TableHead>
+                  <TableHead className="w-32 text-center">Discount</TableHead>
                   <TableHead className="w-28 text-right">Amount</TableHead>
                   <TableHead className="w-10"></TableHead>
                 </TableRow>
@@ -247,6 +251,8 @@ export function InvoiceForm({ onSubmit, onCancel }: InvoiceFormProps) {
             currency={currency}
             discountPercent={discountPercent}
             onDiscountPercentChange={setDiscountPercent}
+            discountType={discountType}
+            onDiscountTypeChange={setDiscountType}
             taxPercent={taxPercent}
             onTaxPercentChange={setTaxPercent}
             shipping={shipping}
