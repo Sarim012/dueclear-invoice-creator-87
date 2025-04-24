@@ -37,8 +37,10 @@ export function PaymentMethodSelector({
 }: PaymentMethodSelectorProps) {
   return (
     <div className="space-y-6">
-      <RadioGroup value={value} onValueChange={(v) => onChange(v as PaymentMethod)}>
-        <div className="flex flex-col space-y-3">
+      <h3 className="text-lg font-semibold">How to Receive Payments</h3>
+      
+      <RadioGroup value={value} onValueChange={(v) => onChange(v as PaymentMethod)} className="space-y-4">
+        <div className="flex flex-col space-y-4">
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="Bank Transfer" id="bank" />
             <Label htmlFor="bank" className="flex items-center cursor-pointer">
@@ -81,10 +83,10 @@ export function PaymentMethodSelector({
         </div>
       </RadioGroup>
 
-      {/* Conditional Input Fields */}
+      {/* Conditional Input Fields with updated placeholders */}
       {value === "Bank Transfer" && (
         <div className="mt-4">
-          <Label htmlFor="bankDetails">Enter bank details</Label>
+          <Label htmlFor="bankDetails">Bank Details</Label>
           <Textarea
             id="bankDetails"
             placeholder="Bank Name, Account Holder Name, Account Number, Account Type, IFSC/SWIFT Code, IBAN, etc..."
@@ -98,10 +100,10 @@ export function PaymentMethodSelector({
 
       {value === "PayPal" && (
         <div className="mt-4">
-          <Label htmlFor="paypalId">Enter PayPal ID</Label>
+          <Label htmlFor="paypalId">PayPal ID</Label>
           <Input
             id="paypalId"
-            placeholder="example@domain.com"
+            placeholder="Enter your PayPal ID"
             value={paypalId}
             onChange={(e) => onPaypalIdChange?.(e.target.value)}
             className="mt-1.5"
@@ -111,10 +113,10 @@ export function PaymentMethodSelector({
 
       {value === "UPI" && (
         <div className="mt-4">
-          <Label htmlFor="upiId">Enter UPI ID</Label>
+          <Label htmlFor="upiId">UPI ID</Label>
           <Input
             id="upiId"
-            placeholder="username@upi"
+            placeholder="Enter your UPI ID"
             value={upiId}
             onChange={(e) => onUpiIdChange?.(e.target.value)}
             className="mt-1.5"
@@ -124,10 +126,10 @@ export function PaymentMethodSelector({
 
       {value === "Payment Link" && (
         <div className="mt-4">
-          <Label htmlFor="paymentLink">Enter Payment Link</Label>
+          <Label htmlFor="paymentLink">Payment Link</Label>
           <Input
             id="paymentLink"
-            placeholder="https://"
+            placeholder="Enter the payment link"
             value={paymentLink}
             onChange={(e) => onPaymentLinkChange?.(e.target.value)}
             className="mt-1.5"
@@ -140,7 +142,7 @@ export function PaymentMethodSelector({
           <Label htmlFor="cashInstructions">Cash Payment Instructions</Label>
           <Textarea
             id="cashInstructions"
-            placeholder="Enter instructions for cash payment..."
+            placeholder="Do you have any instructions? Please mention"
             value={cashInstructions}
             onChange={(e) => onCashInstructionsChange?.(e.target.value)}
             className="mt-1.5"
