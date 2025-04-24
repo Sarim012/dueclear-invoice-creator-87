@@ -1,5 +1,4 @@
 
-import * as React from "react";
 import { PaymentMethod } from "@/types/invoice";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
