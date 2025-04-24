@@ -19,8 +19,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Switch } from "@/components/ui/switch";
-import { generateInvoicePDF } from "@/utils/pdf-generator";
 
 interface InvoiceFormProps {
   onSubmit: (invoice: Invoice) => void;
@@ -71,80 +69,6 @@ export function InvoiceForm({ onSubmit, onCancel }: InvoiceFormProps) {
   // Additional info state
   const [notes, setNotes] = useState("");
   const [terms, setTerms] = useState("");
-  
-  // Add live preview state
-  const [isLivePreviewEnabled, setIsLivePreviewEnabled] = useState(false);
-
-  // Function to generate live preview
-  const generateLivePreview = async () => {
-    if (!isLivePreviewEnabled) return;
-
-    const currentInvoice: Invoice = {
-      id: uuidv4(),
-      logoUrl,
-      invoiceNumber,
-      paymentTerms,
-      issueDate,
-      dueDate,
-      currency,
-      businessDetails,
-      clientDetails,
-      items,
-      subtotal,
-      discount: discountPercent,
-      tax: taxPercent,
-      shipping,
-      total,
-      paymentMethod,
-      bankDetails,
-      paypalId,
-      upiId,
-      paymentLink,
-      cashInstructions,
-      notes,
-      terms,
-      createdAt: new Date(),
-    };
-
-    try {
-      await generateInvoicePDF(currentInvoice);
-    } catch (error) {
-      console.error("Error generating live preview:", error);
-    }
-  };
-
-  // Update live preview when form data changes
-  useEffect(() => {
-    const debounceTimeout = setTimeout(() => {
-      generateLivePreview();
-    }, 1000); // Debounce for 1 second
-
-    return () => clearTimeout(debounceTimeout);
-  }, [
-    isLivePreviewEnabled,
-    logoUrl,
-    invoiceNumber,
-    paymentTerms,
-    issueDate,
-    dueDate,
-    currency,
-    businessDetails,
-    clientDetails,
-    items,
-    subtotal,
-    discountPercent,
-    taxPercent,
-    shipping,
-    total,
-    paymentMethod,
-    bankDetails,
-    paypalId,
-    upiId,
-    paymentLink,
-    cashInstructions,
-    notes,
-    terms,
-  ]);
 
   // Handle logo upload
   const handleLogoUpload = (file: File) => {
@@ -238,21 +162,9 @@ export function InvoiceForm({ onSubmit, onCancel }: InvoiceFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-5xl mx-auto">
       <div className="grid grid-cols-1 gap-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold mb-2">Create New Invoice</h2>
-            <h3 className="text-lg font-medium mb-2">Invoice Details</h3>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="live-preview"
-              checked={isLivePreviewEnabled}
-              onCheckedChange={setIsLivePreviewEnabled}
-            />
-            <label htmlFor="live-preview" className="text-sm text-gray-600">
-              Live Preview
-            </label>
-          </div>
+        <div>
+          <h2 className="text-2xl font-bold mb-2">Create New Invoice</h2>
+          <h3 className="text-lg font-medium mb-2">Invoice Details</h3>
         </div>
 
         {/* Main Invoice Details */}

@@ -1,5 +1,5 @@
 
-import * as React from "react";
+import { useRef, useState } from "react";
 import { Button } from "./button";
 import { Upload, Check, AlertCircle, Image } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -23,9 +23,9 @@ export function FileUpload({
   buttonVariant = "outline",
   buttonText = "Upload",
 }: FileUploadProps) {
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const [error, setError] = React.useState<string | null>(null);
-  const [success, setSuccess] = React.useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
   const handleClick = () => {
     fileInputRef.current?.click();
