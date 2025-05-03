@@ -1,0 +1,63 @@
+
+.invoice-creator-container {
+    margin-top: 20px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.invoice-creator-header {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.invoice-creator-loading {
+    text-align: center;
+    padding: 40px;
+}
+
+.invoice-list-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.invoice-list-table th,
+.invoice-list-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.invoice-list-table th {
+    font-weight: 600;
+    color: #23282d;
+}
+
+.invoice-list-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+.invoice-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.invoice-actions button {
+    cursor: pointer;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 3px;
+}
+
+.invoice-view {
+    background-color: #2271b1;
+    color: white;
+}
+
+.invoice-delete {
+    background-color: #dc3545;
+    color: white;
+}
