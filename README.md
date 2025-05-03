@@ -1,4 +1,5 @@
-# Welcome to your Lovable project
+
+# Welcome to your Invoice Creator project
 
 ## Project info
 
